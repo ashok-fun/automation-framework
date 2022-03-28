@@ -1,24 +1,31 @@
 package businessfunctions;
 
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.Assert;
+import org.testng.Reporter;
 
+import orep.DashboardOR;
 import utilis.Library;
 
 public class DashboardBF {
+	public static int noOfSecs =20;
 
-	@Test(enabled = true, priority=1)
-	@Parameters({"browserName"})
-	public void Dashboard_TC001 (String browserName) throws Exception
+	public static void login(RemoteWebDriver driver, String userID, String Password)
+
 	{
 		try {
-			Library.startWebDriver(null, browserName);
+			Library.click(driver, DashboardOR.customerFrontEndLogin, true, noOfSecs);
+			Library.SwitchWindowByTitle(driver, "Login - PHPTRAVELS");
+			Library.sendKeys(driver, DashboardOR.userID, userID, false, noOfSecs);
+			Library.sendKeys(driver, DashboardOR.password, Password, false, noOfSecs);
+			Library.click(driver, DashboardOR.login, true, noOfSecs);
+			String Actual = Library.getText(driver, Password, false, noOfSecs);
+			Reporter.log("Verify login is successful", true);
+			Assert.assertEquals("Home", Actual);
 			
+		} catch (Exception e) {
 		}
-		catch (Exception e){
-			
-		}
-		finally {}
+
 	}
 
 }
