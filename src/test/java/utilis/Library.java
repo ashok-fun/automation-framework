@@ -1,6 +1,9 @@
 package utilis;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -15,11 +18,17 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.codoid.products.fillo.Fillo;
+import com.codoid.products.fillo.Recordset;
+
 public class Library {
 
 	public static String driverPath = System.getProperty("user.dir").toString() + "\\Drivers";
 	public static Properties EnvConfig = new Properties();
+	public static Properties MainConfig = new Properties();
+	public static String env = "";
 	public static String URL = "";
+	public static String resourceLocation = System.getProperty("user.dir").toString() + "\\src\\test\\resources\\";
 
 	@SuppressWarnings("deprecation")
 	public static synchronized RemoteWebDriver startWebDriver(RemoteWebDriver driver, String browserName) {
@@ -57,8 +66,12 @@ public class Library {
 
 	public static void beforeSuite() throws Exception {
 
-		FileInputStream file1 = new FileInputStream("./src/test/resources/UAT/testAutomation.properties");
-		Library.EnvConfig.load(file1);
+		FileInputStream file1 = new FileInputStream("./src/test/resources/Pointer.properties");
+		Library.MainConfig.load(file1);
+		Library.env = Library.MainConfig.getProperty("ENV");
+
+		FileInputStream file2 = new FileInputStream("./src/test/resources/UAT/testAutomation.properties");
+		Library.EnvConfig.load(file2);
 
 	}
 
@@ -114,10 +127,10 @@ public class Library {
 		return null;
 
 	}
-	
+
 	public static String getText(RemoteWebDriver driver, String locatorTypeAndValue, boolean throwException,
 			int noOfSecs) throws Exception {
-		String returnValue ="";
+		String returnValue = "";
 		WebElement we = getWebElement(driver, locatorTypeAndValue, throwException, noOfSecs);
 		if (we != null) {
 			highlight(driver, we);
@@ -185,10 +198,97 @@ public class Library {
 		for (String winHandle : driver.getWindowHandles()) {
 			if (driver.switchTo().window(winHandle).getTitle().contains(windowTitle)) {
 				break;
-			}else {
+			} else {
 				driver.switchTo().window(currentWindow);
 			}
 		}
+	}
+
+	public static HashMap<String, String> getDataFromExcel(String query, String finenameAndLocation) throws Exception {
+
+		HashMap<String, String> hm = new HashMap<String, String>();
+		Recordset rs;
+		ArrayList<String> finaNameList;
+		StringBuilder fildNameString = new StringBuilder();
+		String fieldName = null, fieldValue = null;
+		int fieldCount = 0;
+
+		finenameAndLocation = resourceLocation + env + "\\" + finenameAndLocation;
+		System.out.println("finenameAndLocation " + finenameAndLocation);
+		if (isNullOrBlank(query) || (isNullOrBlank(finenameAndLocation))) {
+			throw new Exception(" query and finenameAndLocation are blank or null");
+		}
+
+		if (new File(finenameAndLocation).exists() == false) {
+			throw new Exception("finenameAndLocation is does not exists");
+		}
+
+		Fillo f = new Fillo();
+		query = query.replace("[", "");
+		query = query.replace("]", "");
+		query = query.replace("$", "");
+		System.out.println("query " + query);
+		com.codoid.products.fillo.Connection conn = f.getConnection(finenameAndLocation);
+		rs = conn.executeQuery(query);
+
+		finaNameList = rs.getFieldNames();
+
+		for (String currentFieldname : finaNameList) {
+			fieldCount = fieldCount + 1;
+			if (fieldCount == 1) {
+				fildNameString.append(currentFieldname);
+			} else {
+				fildNameString.append(";" + currentFieldname);
+			}
+		}
+		
+		long resultsCount = 1;
+		
+		while(rs.next()) {
+			for (int i=0; i<fieldCount; i++) {
+				fieldName = finaNameList.get(i);
+				fieldValue= (String) rs.getField(i).value();
+				if (fieldValue== null) {
+					fieldValue= "";
+				}
+				if (hm.containsKey(fieldName+resultsCount)) {
+					resultsCount = resultsCount + 1;
+					hm.put(fieldName+resultsCount, fieldValue);
+					resultsCount= 1;
+				}else {
+					hm.put(fieldName+resultsCount, fieldValue);
+				}
+			}
+		}
+		
+		if (conn!= null) {
+			conn.close();
+		}
+		if (rs!=null) {
+			rs.close();
+		}
+		hm.put("RESULTCOUNT", resultsCount + "");
+		hm.put("FIELDCOUNT", fieldCount + "");
+		hm.put("FIELDNAMES", fildNameString + "");
+		
+
+		return hm;
+
+	}
+
+	public static boolean isNullOrBlank(String ValueToBeChecked) {
+		boolean returnValue;
+		if (ValueToBeChecked != null) {
+			if (!ValueToBeChecked.trim().equals("")) {
+				returnValue = false;
+			} else {
+				returnValue = true;
+			}
+		} else {
+			returnValue = true;
+		}
+		return returnValue;
+
 	}
 
 }
