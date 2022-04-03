@@ -101,8 +101,24 @@ public class Library {
 		WebElement we = getWebElement(driver, locatorTypeAndValue, throwException, noOfSecs);
 		if (we != null) {
 			highlight(driver, we);
-			we.click();
 			unHighlight(driver, we);
+			we.click();
+
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public static boolean clickbyJavaScript(RemoteWebDriver driver, String locatorTypeAndValue, boolean throwException,
+			int noOfSecs) throws Exception {
+		WebElement we = getWebElement(driver, locatorTypeAndValue, throwException, noOfSecs);
+		if (we != null) {
+			highlight(driver, we);
+			unHighlight(driver, we);
+			JavascriptExecutor js = (JavascriptExecutor) driver;
+			js.executeScript("arguments[0].click", we);
 			return true;
 		} else {
 			return false;
@@ -241,36 +257,35 @@ public class Library {
 				fildNameString.append(";" + currentFieldname);
 			}
 		}
-		
+
 		long resultsCount = 1;
-		
-		while(rs.next()) {
-			for (int i=0; i<fieldCount; i++) {
+
+		while (rs.next()) {
+			for (int i = 0; i < fieldCount; i++) {
 				fieldName = finaNameList.get(i);
-				fieldValue= (String) rs.getField(i).value();
-				if (fieldValue== null) {
-					fieldValue= "";
+				fieldValue = (String) rs.getField(i).value();
+				if (fieldValue == null) {
+					fieldValue = "";
 				}
-				if (hm.containsKey(fieldName+resultsCount)) {
+				if (hm.containsKey(fieldName + resultsCount)) {
 					resultsCount = resultsCount + 1;
-					hm.put(fieldName+resultsCount, fieldValue);
-					resultsCount= 1;
-				}else {
-					hm.put(fieldName+resultsCount, fieldValue);
+					hm.put(fieldName + resultsCount, fieldValue);
+					resultsCount = 1;
+				} else {
+					hm.put(fieldName + resultsCount, fieldValue);
 				}
 			}
 		}
-		
-		if (conn!= null) {
+
+		if (conn != null) {
 			conn.close();
 		}
-		if (rs!=null) {
+		if (rs != null) {
 			rs.close();
 		}
 		hm.put("RESULTCOUNT", resultsCount + "");
 		hm.put("FIELDCOUNT", fieldCount + "");
 		hm.put("FIELDNAMES", fildNameString + "");
-		
 
 		return hm;
 

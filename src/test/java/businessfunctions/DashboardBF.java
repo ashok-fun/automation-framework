@@ -8,7 +8,7 @@ import orep.DashboardOR;
 import utilis.Library;
 
 public class DashboardBF {
-	public static int noOfSecs =20;
+	public static int noOfSecs = 20;
 
 	public static void login(RemoteWebDriver driver, String userID, String Password)
 
@@ -22,8 +22,19 @@ public class DashboardBF {
 			String Actual = Library.getText(driver, Password, false, noOfSecs);
 			Reporter.log("Verify login is successful", true);
 			Assert.assertEquals("Home", Actual);
-			
+
 		} catch (Exception e) {
+		}
+
+	}
+
+	public static void logoff(RemoteWebDriver driver) {
+
+		try {
+			Library.click(driver, DashboardOR.logoff, true, noOfSecs);
+
+		} catch (Exception e) {
+			Assert.fail();
 		}
 
 	}

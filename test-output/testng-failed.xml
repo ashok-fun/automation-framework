@@ -5,14 +5,19 @@
   <parameter name="browserName" value="chrome"/>
   <test thread-count="5" name="Windows 11 Chrome(failed)">
     <classes>
-      <class name="tests.Dashboard">
+      <class name="testRunner.DashboardRunner">
         <methods>
+          <include name="setUpClass"/>
           <include name="beforeClass"/>
-          <include name="Dashboard_TC001"/>
+          <include name="tearDownClass"/>
+          <include name="runScenario" invocation-numbers="0"/>
+          <include name="afterTest"/>
+          <include name="afterSuite"/>
           <include name="beforeSuite"/>
-          <include name="befreMethod"/>
+          <include name="beforeTest"/>
+          <include name="afterClass"/>
         </methods>
-      </class> <!-- tests.Dashboard -->
+      </class> <!-- testRunner.DashboardRunner -->
     </classes>
   </test> <!-- Windows 11 Chrome(failed) -->
 </suite> <!-- Failed suite [Automation test] -->

@@ -9,6 +9,7 @@ public class DashboardOR {
 	public static final String password = Constants.XPATH + "~" + "//input[@type='password' and @placeholder='Password']";
 	public static final String login = Constants.XPATH + "~" + "//span[@class='ladda-label' and contains(text(),'Login')]";
 	public static final String home = Constants.XPATH + "~" + "//a[@title='home' and contains(text(),'Home')]";
+	public static final String logoff = Constants.XPATH + "~" + "//a[@href='https://www.phptravels.net/account/logout' and @class=' waves-effect']";
 	
 
 }
