@@ -26,6 +26,7 @@ public class Library {
 	public static String driverPath = System.getProperty("user.dir").toString() + "\\Drivers";
 	public static Properties EnvConfig = new Properties();
 	public static Properties MainConfig = new Properties();
+	public static Properties JIRAConfig = new Properties();
 	public static String env = "";
 	public static String URL = "";
 	public static String resourceLocation = System.getProperty("user.dir").toString() + "\\src\\test\\resources\\";
