@@ -2,22 +2,17 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Failed suite [Automation test]" guice-stage="DEVELOPMENT">
   <parameter name="browserChannel" value="desktop"/>
-  <parameter name="browserName" value="chrome"/>
+  <parameter name="browserName" value="edge"/>
   <test thread-count="5" name="Windows 11 Chrome(failed)">
     <classes>
-      <class name="testRunner.DashboardRunner">
+      <class name="tests.Dashboard">
         <methods>
-          <include name="setUpClass"/>
           <include name="beforeClass"/>
-          <include name="tearDownClass"/>
-          <include name="runScenario" invocation-numbers="0"/>
-          <include name="afterTest"/>
-          <include name="afterSuite"/>
+          <include name="Dashboard_TC001"/>
           <include name="beforeSuite"/>
-          <include name="beforeTest"/>
-          <include name="afterClass"/>
+          <include name="befreMethod"/>
         </methods>
-      </class> <!-- testRunner.DashboardRunner -->
+      </class> <!-- tests.Dashboard -->
     </classes>
   </test> <!-- Windows 11 Chrome(failed) -->
 </suite> <!-- Failed suite [Automation test] -->

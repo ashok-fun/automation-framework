@@ -5,21 +5,24 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.codoid.products.fillo.Fillo;
 import com.codoid.products.fillo.Recordset;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class Library {
 
@@ -31,25 +34,36 @@ public class Library {
 	public static String URL = "";
 	public static String resourceLocation = System.getProperty("user.dir").toString() + "\\src\\test\\resources\\";
 
-	@SuppressWarnings("deprecation")
 	public static synchronized RemoteWebDriver startWebDriver(RemoteWebDriver driver, String browserName) {
 
 		if (driver == null) {
 			switch (browserName) {
 
 			case "chrome": {
-				System.setProperty("webdriver.chrome.driver", driverPath + "\\chromedriver.exe");
-				driver = new ChromeDriver();
+				// System.setProperty("webdriver.chrome.driver", driverPath +
+				// "\\chromedriver.exe");
+				WebDriverManager.chromedriver().setup();
+
+				ChromeOptions options = new ChromeOptions();
+				options.addArguments("--remote-allow-origins=*");
+				driver = new ChromeDriver(options);
 				break;
 			}
 			case "firefox": {
-				System.setProperty("webdriver.gecko.driver", driverPath + "\\geckodriver.exe");
+				//System.setProperty("webdriver.gecko.driver", driverPath + "\\geckodriver.exe");
+				WebDriverManager.firefoxdriver().setup();
 				driver = new FirefoxDriver();
 				break;
 			}
 			case "edge": {
-				System.setProperty("webdriver.edge.driver", driverPath + "\\msedgedriver.exe");
-				driver = new EdgeDriver();
+				//System.setProperty("webdriver.edge.driver", driverPath + "\\msedgedriver.exe");
+				WebDriverManager.edgedriver().setup();
+				
+				EdgeOptions options = new EdgeOptions();
+		        options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+		        options.addArguments("--remote-allow-origins=*");
+		        options.setCapability("ignore-certificate-errors", true);		        
+				driver = new EdgeDriver(options);
 				break;
 			}
 
